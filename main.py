@@ -154,14 +154,69 @@ async def upload(bot: Client, m: Message):
              headers = {'Host': 'api.classplusapp.com', 'x-access-token': 'eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksImNhdGVnb3J5SWQiOm51bGx9', 'user-agent': 'Mobile-Android', 'app-version': '1.4.37.1', 'api-version': '18', 'device-id': '5d0d17ac8b3c9f51', 'device-details': '2848b866799971ca_2848b8667a33216c_SDK-30', 'accept-encoding': 'gzip'}
              params = (('url', f'{url}'),)
              response = requests.get('https://api.classplusapp.com/cams/uploader/video/jw-signed-url', headers=headers, params=params)
-             url = response.json()['url']
- 
-            elif '/master.mpd' in url:
+             url = response.json()['url'] 
+
+            elif "https://appx-transcoded-videos.livelearn.in/videos/rozgar-data/" in url:
+                url = url.replace("https://appx-transcoded-videos.livelearn.in/videos/rozgar-data/", "")
+                name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "@").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
+                name = f'{str(count).zfill(3)}) {name1[:60]}'
+                cmd = f'yt-dlp -o "{name}.mp4" "{url}"'
+
+            elif "https://appx-transcoded-videos-mcdn.akamai.net.in/videos/bhainskipathshala-data/" in url:
+                url = url.replace("https://appx-transcoded-videos-mcdn.akamai.net.in/videos/bhainskipathshala-data/", "")
+                name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "@").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
+                name = f'{str(count).zfill(3)}) {name1[:60]}'
+                cmd = f'yt-dlp -o "{name}.mp4" "{url}"'
+
+            elif "apps-s3-jw-prod.utkarshapp.com" in url:
+                if 'enc_plain_mp4' in url:
+                    url = url.replace(url.split("/")[-1], res⁴'.mp4') 
+
+                    
+                elif 'Key-Pair-Id' in url:
+                    url = None
+                    
+                elif '.m3u8' in url:
+                    q = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).split("/")[0]
+                    x = url.split("/")[5]
+                    x = url.replace(x, "")
+                    url = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).replace(q+"/", x)
+            #elif '/master.mpd' in url:
+             #id =  url.split("/")[-2]
+             #url = f"https://player.muftukmall.site/?id={id}"
+            elif "/master.mpd" in url or "d1d34p8vz63oiq" in url or "sec1.pw.live" in url:
+             id =  url.split("/")[-2]
+             url = f"https://anonymouspwplayer-b99f57957198.herokuapp.com/pw?url={url}?token={raw_text4}"
+             #url = f"https://madxabhi-pw.onrender.com/{id}/master.m3u8?token={raw_text4}"
+            #elif '/master.mpd' in url:
              id =  url.split("/")[-2]
              url =  "https://d26g5bnklkwsh4.cloudfront.net/" + id + "/master.m3u8"
 
             name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
             name = f'{str(count).zfill(3)}) {name1[:60]}'
+
+            #if 'cpvod.testbook' in url:
+                #CPVOD = url.split("/")[-2]
+                #url = requests.get(f'https://extractbot.onrender.com/classplus?link=https://cpvod.testbook.com/{CPVOD}/playlist.m3u8', headers={'x-access-token': 'eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksImNhdGVnb3J5SWQiOm51bGx9r'}).json()['url']
+            
+            #if 'cpvod.testbook' in url:
+               #url = requests.get(f'https://mon-key-3612a8154345.herokuapp.com/get_keys?url=https://cpvod.testbook.com/{CPVOD}/playlist.m3u8', headers={'x-access-token': 'eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksImNhdGVnb3J5SWQiOm51bGx9r'}).json()['url']
+           
+           
+            if 'khansirvod4.pc.cdn.bitgravity.com' in url:               
+               parts = url.split('/')               
+               part1 = parts[1]
+               part2 = parts[2]
+               part3 = parts[3] 
+               part4 = parts[4]
+               part5 = parts[5]
+               
+               print(f"PART1: {part1}")
+               print(f"PART2: {part2}")
+               print(f"PART3: {part3}")
+               print(f"PART4: {part4}")
+               print(f"PART5: {part5}")
+               url = f"https://kgs-v4.akamaized.net/kgs-cv/{part3}/{part4}/{part5}"
 
             if "youtu" in url:
                 ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
