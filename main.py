@@ -111,11 +111,23 @@ async def upload(bot: Client, m: Message):
     await editable.edit("Now Enter A Caption to add caption on your uploaded file")
     input3: Message = await bot.listen(editable.chat.id)
     raw_text3 = input3.text
-    await input3.delete(True)
-    highlighter  = f"️ ⁪⁬⁮⁮⁮"
-    if raw_text3 == 'Robin':
-        MR = highlighter 
+    await input3.delete(True) 
+    # Default credit message with link
+    credit = "️[𝗧𝘂𝘀𝗵𝗮𝗿](https://t.me/Tushar0125)"
+    if raw_text3 == '1':
+        CR = '[𝗧𝘂𝘀𝗵𝗮𝗿](https://t.me/Tushar0125)'
+    elif raw_text3:
+        try:
+            text, link = raw_text3.split(',')
+            CR = f'[{text.strip()}]({link.strip()})'
+        except ValueError:
+            CR = raw_text3  # In case the input is not in the expected format, use the raw text
     else:
+        CR = credit
+    #highlighter  = f"️ ⁪⁬⁮⁮⁮"
+    #if raw_text3 == 'Robin':
+        MR = highlighter 
+    #else:
         MR = raw_text3
    
     await editable.edit("Now send the Thumb url/nEg » https://graph.org/file/ce1723991756e48c35aa1.jpg \n Or if don't want thumbnail send = no")
