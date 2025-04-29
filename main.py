@@ -156,7 +156,7 @@ async def upload(bot: Client, m: Message):
     #else:
         MR = raw_text3
    
-    await editable.edit("Now send the Thumb url Eg » https://graph.org/file/ce1723991756e48c35aa1.jpg \n Or if don't want thumbnail send = no")
+    await editable.edit("𝗡𝗼𝘄 𝗦𝗲𝗻𝗱 𝗧𝗵𝗲 𝗧𝗵𝘂𝗺𝗯 𝗨𝗿𝗹 𝗘𝗴 » https://graph.org/file/13a89d77002442255efad-989ac290c1b3f13b44.jpg\n\n𝗢𝗿 𝗜𝗳 𝗗𝗼𝗻'𝘁 𝗪𝗮𝗻𝘁 𝗧𝗵𝘂𝗺𝗯𝗻𝗮𝗶𝗹 𝗦𝗲𝗻𝗱 = 𝗻𝗼")
     input6 = message = await bot.listen(editable.chat.id)
     raw_text6 = input6.text
     await input6.delete(True)
@@ -168,7 +168,7 @@ async def upload(bot: Client, m: Message):
         thumb = "thumb.jpg"
     else:
         thumb == "no"
-
+    failed_count =0
     if len(links) == 1:
         count = 1
     else:
