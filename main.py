@@ -95,24 +95,12 @@ async def upload(bot: Client, m: Message):
            await m.reply_text("**Invalid file input.**")
            os.remove(x)
            return
-    
-   
+     
     await editable.edit(f"**𝕋ᴏᴛᴀʟ ʟɪɴᴋ𝕤 ғᴏᴜɴᴅ ᴀʀᴇ🔗🔗** **{len(links)}**\n\n**𝕊ᴇɴᴅ 𝔽ʀᴏᴍ ᴡʜᴇʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ɪɴɪᴛɪᴀʟ ɪ𝕤** **1**")
     input0: Message = await bot.listen(editable.chat.id)
     raw_text = input0.text
     await input0.delete(True) 
-    # extract and validate count
-    import re
-    match = re.search(r"\d+", raw_text)
-    if match:
-        count = int(match.group())
-    else:
-        await editable.edit("❌ **गलत इनपुट: कृपया केवल कोई संख्या भेजें।**")
-        return
-
-    if count > len(links):
-        count = len(links)
-
+    
     await editable.edit("📚 𝗘𝗻𝘁𝗲𝗿 𝗬𝗼𝘂𝗿 𝗕𝗮𝘁𝗰𝗵 𝗡𝗮𝗺𝗲 📚\n\n🦠 𝗦𝗲𝗻𝗱 `1` 𝗙𝗼𝗿 𝗨𝘀𝗲 𝗗𝗲𝗳𝗮𝘂𝗹𝘁 🦠")
     input1: Message = await bot.listen(editable.chat.id)
     raw_text0 = input1.text
