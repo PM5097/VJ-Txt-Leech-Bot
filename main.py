@@ -88,9 +88,9 @@ async def upload(bot: Client, m: Message):
        links = []
        for i in content:
            if i.startswith("http"):
-           links.append(i.split("://", 1))
+               links.append(i.split("://", 1))
        os.remove(x)
-            # print(len(links)
+       # print(len(links)
     except:
            await m.reply_text("**Invalid file input.**")
            os.remove(x)
