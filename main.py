@@ -116,6 +116,9 @@ def save_to_file(videos, name):
                 file.write(f"{title}: {url}\n")
     return filename
 
+
+@bot.on_message(filters.command(["upload"]))
+async def upload(bot: Client, m: Message):
     await editable.edit(f"**𝕋ᴏᴛᴀʟ ʟɪɴᴋ𝕤 ғᴏᴜɴᴅ ᴀʀᴇ🔗🔗** **{len(links)}**\n\n**𝕊ᴇɴᴅ 𝔽ʀᴏᴍ ᴡʜᴇʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ɪɴɪᴛɪᴀʟ ɪ𝕤** **1**")
     input0: Message = await bot.listen(editable.chat.id)
     raw_text = input0.text
