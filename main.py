@@ -95,7 +95,54 @@ async def upload(bot: Client, m: Message):
            await m.reply_text("**Invalid file input.**")
            os.remove(x)
            return
-     
+        
+     def sanitize_filename(name):
+    """
+    Sanitizes a string to create a valid filename.
+    """
+    return re.sub(r'[^\w\s-]', '', name).strip().replace(' ', '_')
+
+def get_videos_with_ytdlp(url):
+    """
+    Retrieves video titles and URLs using `yt-dlp`.
+    If a title is not available, only the URL is saved.
+    """
+    ydl_opts = {
+        'quiet': True,
+        'extract_flat': True,
+        'skip_download': True,
+    }
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            result = ydl.extract_info(url, download=False)
+            if 'entries' in result:
+                title = result.get('title', 'Unknown Title')
+                videos = {}
+                for entry in result['entries']:
+                    video_url = entry.get('url', None)
+                    video_title = entry.get('title', None)
+                    if video_url:
+                        videos[video_title if video_title else "Unknown Title"] = video_url
+                return title, videos
+            return None, None
+    except Exception as e:
+        logging.error(f"Error retrieving videos: {e}")
+        return None, None
+
+def save_to_file(videos, name):
+    """
+    Saves video titles and URLs to a .txt file.
+    If a title is unavailable, only the URL is saved.
+    """
+    filename = f"{sanitize_filename(name)}.txt"
+    with open(filename, 'w', encoding='utf-8') as file:
+        for title, url in videos.items():
+            if title == "Unknown Title":
+                file.write(f"{url}\n")
+            else:
+                file.write(f"{title}: {url}\n")
+    return filename
+
 
     await editable.edit(f"**𝕋ᴏᴛᴀʟ ʟɪɴᴋ𝕤 ғᴏᴜɴᴅ ᴀʀᴇ🔗🔗** **{len(links)}**\n\n**𝕊ᴇɴᴅ 𝔽ʀᴏᴍ ᴡʜᴇʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ɪɴɪᴛɪᴀʟ ɪ𝕤** **1**")
     input0: Message = await bot.listen(editable.chat.id)
