@@ -96,38 +96,11 @@ async def upload(bot: Client, m: Message):
            os.remove(x)
            return
         
-     def sanitize_filename(name):
+def sanitize_filename(name):
     """
     Sanitizes a string to create a valid filename.
     """
     return re.sub(r'[^\w\s-]', '', name).strip().replace(' ', '_')
-
-def get_videos_with_ytdlp(url):
-    """
-    Retrieves video titles and URLs using `yt-dlp`.
-    If a title is not available, only the URL is saved.
-    """
-    ydl_opts = {
-        'quiet': True,
-        'extract_flat': True,
-        'skip_download': True,
-    }
-    try:
-        with YoutubeDL(ydl_opts) as ydl:
-            result = ydl.extract_info(url, download=False)
-            if 'entries' in result:
-                title = result.get('title', 'Unknown Title')
-                videos = {}
-                for entry in result['entries']:
-                    video_url = entry.get('url', None)
-                    video_title = entry.get('title', None)
-                    if video_url:
-                        videos[video_title if video_title else "Unknown Title"] = video_url
-                return title, videos
-            return None, None
-    except Exception as e:
-        logging.error(f"Error retrieving videos: {e}")
-        return None, None
 
 def save_to_file(videos, name):
     """
@@ -142,7 +115,6 @@ def save_to_file(videos, name):
             else:
                 file.write(f"{title}: {url}\n")
     return filename
-
 
     await editable.edit(f"**𝕋ᴏᴛᴀʟ ʟɪɴᴋ𝕤 ғᴏᴜɴᴅ ᴀʀᴇ🔗🔗** **{len(links)}**\n\n**𝕊ᴇɴᴅ 𝔽ʀᴏᴍ ᴡʜᴇʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ɪɴɪᴛɪᴀʟ ɪ𝕤** **1**")
     input0: Message = await bot.listen(editable.chat.id)
