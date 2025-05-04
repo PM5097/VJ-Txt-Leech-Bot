@@ -95,26 +95,6 @@ async def upload(bot: Client, m: Message):
            await m.reply_text("**Invalid file input.**")
            os.remove(x)
            return
-        
-def sanitize_filename(name):
-    """
-    Sanitizes a string to create a valid filename.
-    """
-    return re.sub(r'[^\w\s-]', '', name).strip().replace(' ', '_')
-
-def save_to_file(videos, name):
-    """
-    Saves video titles and URLs to a .txt file.
-    If a title is unavailable, only the URL is saved.
-    """
-    filename = f"{sanitize_filename(name)}.txt"
-    with open(filename, 'w', encoding='utf-8') as file:
-        for title, url in videos.items():
-            if title == "Unknown Title":
-                file.write(f"{url}\n")
-            else:
-                file.write(f"{title}: {url}\n")
-    return filename
 
 
     await editable.edit(f"**𝕋ᴏᴛᴀʟ ʟɪɴᴋ𝕤 ғᴏᴜɴᴅ ᴀʀᴇ🔗🔗** **{len(links)}**\n\n**𝕊ᴇɴᴅ 𝔽ʀᴏᴍ ᴡʜᴇʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ɪɴɪᴛɪᴀʟ ɪ𝕤** **1**")
