@@ -10,6 +10,7 @@ import time
 import asyncio
 import requests
 import subprocess
+import ffmpeg
 import cloudscraper
 import random 
 
