@@ -550,55 +550,29 @@ async def v2upload_handler(bot: Client, m: Message):
         filename = f"decoded.{ext}"
 
         if is_text:
-            await bot.send_document(
-                chat_id=m.chat.id,
-                document=(filename, decoded),
-                caption=f"✅ Decoded via {', '.join(diag)}"
-            )
-        else:
-            await bot.send_document(
-                chat_id=m.chat.id,
-                document=(filename, decoded),
-                caption=f"✅ Binary decoded via {', '.join(diag)}"
-            )
+            merged_texts.append(txt)
+            else:
+                # send non-text individually
+                filename = f"decoded_{found}.{ext or 'bin'}"
+                await bot.send_document(
+                    chat_id=m.chat.id,
+                    document=(filename, decoded),
+                    caption=f"✅ Binary decoded (link {found}) via {', '.join(diag)}"
+                )
 
-
-@bot.on_message(filters.command(["v2upload"]))
-async def v2upload_handler(bot: Client, m: Message):
-    text = m.text or ""
-    matches = ENC_PATTERN.findall(text)
-
-    # Case 1: direct enc:// link
-    if matches:
-        for payload, ext in matches:
-            await process_enc_link(bot, m.chat.id, payload, ext)
-        return
-
-    # Case 2: ask user for TXT file
-    editable = await m.reply_text("📄 Please send a `.txt` file containing enc:// links.")
-    input_file: Message = await bot.listen(editable.chat.id)
-    filepath = await input_file.download()
-    await input_file.delete(True)
-
-    try:
-        with open(filepath, "r") as f:
-            lines = f.readlines()
-    except Exception as e:
-        await m.reply_text(f"❌ Could not read file: {e}")
-        os.remove(filepath)
-        return
-
-    os.remove(filepath)
-
-    found = 0
-    for line in lines:
-        for payload, ext in ENC_PATTERN.findall(line):
-            found += 1
-            await process_enc_link(bot, m.chat.id, payload, ext)
-
-    if not found:
+    if found == 0:
         await m.reply_text("⚠️ No enc:// links found in the file.")
     else:
+        if merged_texts:
+            merged = "\n\n".join(merged_texts).encode("utf-8")
+            filename = "merged_decoded.txt"
+            await bot.send_document(
+                chat_id=m.chat.id,
+                document=(filename, merged),
+                caption=f"✅ Merged {len(merged_texts)} decoded text link(s) into one file."
+            )
         await m.reply_text(f"✅ Processed {found} enc:// link(s).")
+
+
 
 bot.run()
