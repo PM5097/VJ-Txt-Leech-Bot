@@ -452,5 +452,116 @@ async def upload(bot: Client, m: Message):
         await m.reply_text(e)
     await m.reply_text("**𝔻ᴏɴᴇ 𝔹ᴏ𝕤𝕤😎**")
 
+import binascii
+import zlib
+import base64
+try:
+    import base58
+except ImportError:
+    base58 = None
+
+# Regex for enc:// links
+ENC_PATTERN = re.compile(r"enc://:?([A-Za-z0-9\-_+/=]+)(?::([A-Za-z0-9]+))?")
+
+def try_base64(data: str):
+    try:
+        return base64.b64decode(data + "===")
+    except Exception:
+        return None
+
+def try_hex(data: str):
+    try:
+        return binascii.unhexlify(data)
+    except Exception:
+        return None
+
+def try_base58(data: str):
+    if not base58: 
+        return None
+    try:
+        return base58.b58decode(data)
+    except Exception:
+        return None
+
+def try_zlib(data: bytes):
+    try:
+        return zlib.decompress(data)
+    except Exception:
+        return None
+
+def detect_text(data: bytes):
+    try:
+        txt = data.decode("utf-8")
+        return True, txt
+    except Exception:
+        return False, ""
+    
+
+@bot.on_message(filters.command(["v2upload"]))
+async def v2upload_handler(bot: Client, m: Message):
+    text = m.text or ""
+    matches = ENC_PATTERN.findall(text)
+    if not matches:
+        await m.reply_text("⚠️ Please send `/v2upload enc://...:txt` style link.")
+        return
+    
+    for payload, ext in matches:
+        ext = ext or "txt"
+        decoded = None
+        diag = []
+
+        # base64
+        b = try_base64(payload)
+        if b:
+            diag.append("base64 ok")
+            z = try_zlib(b)
+            if z: 
+                diag.append("zlib after base64")
+                b = z
+            decoded = b
+
+        # hex
+        if not decoded:
+            b = try_hex(payload)
+            if b:
+                diag.append("hex ok")
+                z = try_zlib(b)
+                if z:
+                    diag.append("zlib after hex")
+                    b = z
+                decoded = b
+
+        # base58
+        if not decoded:
+            b = try_base58(payload)
+            if b:
+                diag.append("base58 ok")
+                z = try_zlib(b)
+                if z:
+                    diag.append("zlib after base58")
+                    b = z
+                decoded = b
+
+        if not decoded:
+            await m.reply_text("❌ Could not decode.\nTried: base64, hex, base58 (+zlib).")
+            continue
+
+        is_text, txt = detect_text(decoded)
+        filename = f"decoded.{ext}"
+
+        if is_text:
+            await bot.send_document(
+                chat_id=m.chat.id,
+                document=(filename, decoded),
+                caption=f"✅ Decoded via {', '.join(diag)}"
+            )
+        else:
+            await bot.send_document(
+                chat_id=m.chat.id,
+                document=(filename, decoded),
+                caption=f"✅ Binary decoded via {', '.join(diag)}"
+            )
+
+
 
 bot.run()
