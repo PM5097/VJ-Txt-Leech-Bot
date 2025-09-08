@@ -562,9 +562,9 @@ async def v2upload_handler(bot: Client, m: Message):
             ) 
 
 
-      if found == 0:
+     if found == 0:
           await m.reply_text("⚠️ No enc:// links found in the file.")
-      else:
+     else:
           if merged_texts:
               merged = "\n\n".join(merged_texts).encode("utf-8")
               filename = "merged_decoded.txt"
