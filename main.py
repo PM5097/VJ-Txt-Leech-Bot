@@ -563,5 +563,42 @@ async def v2upload_handler(bot: Client, m: Message):
             )
 
 
+@bot.on_message(filters.command(["v2upload"]))
+async def v2upload_handler(bot: Client, m: Message):
+    text = m.text or ""
+    matches = ENC_PATTERN.findall(text)
+
+    # Case 1: direct enc:// link
+    if matches:
+        for payload, ext in matches:
+            await process_enc_link(bot, m.chat.id, payload, ext)
+        return
+
+    # Case 2: ask user for TXT file
+    editable = await m.reply_text("📄 Please send a `.txt` file containing enc:// links.")
+    input_file: Message = await bot.listen(editable.chat.id)
+    filepath = await input_file.download()
+    await input_file.delete(True)
+
+    try:
+        with open(filepath, "r") as f:
+            lines = f.readlines()
+    except Exception as e:
+        await m.reply_text(f"❌ Could not read file: {e}")
+        os.remove(filepath)
+        return
+
+    os.remove(filepath)
+
+    found = 0
+    for line in lines:
+        for payload, ext in ENC_PATTERN.findall(line):
+            found += 1
+            await process_enc_link(bot, m.chat.id, payload, ext)
+
+    if not found:
+        await m.reply_text("⚠️ No enc:// links found in the file.")
+    else:
+        await m.reply_text(f"✅ Processed {found} enc:// link(s).")
 
 bot.run()
