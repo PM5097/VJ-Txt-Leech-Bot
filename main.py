@@ -558,7 +558,9 @@ async def v2upload_handler(bot: Client, m: Message):
                chat_id=m.chat.id,
                document=(filename, decoded),
                caption=f"✅ Binary decoded (link {found}) via {', '.join(diag)}"
-            )
+            ) 
+
+
 if found == 0:
     await m.reply_text("⚠️ No enc:// links found in the file.")
 else:
