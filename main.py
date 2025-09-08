@@ -562,22 +562,22 @@ async def v2upload_handler(bot: Client, m: Message):
             ) 
 
 
-     if found == 0:
-          await m.reply_text("⚠️ No enc:// links found in the file.")
-     else:
-          if merged_texts:
-              merged = "\n\n".join(merged_texts).encode("utf-8")
-              filename = "merged_decoded.txt"
-              from io import BytesIO
-              bio = BytesIO(merged)
-              bio.name = filename
-              await bot.send_document(
-                  chat_id=m.chat.id,
-                  document=bio,
-                  caption=f"✅ Merged {len(merged_texts)} decoded text link(s) into one file."
-              )
+    if found == 0:
+        await m.reply_text("⚠️ No enc:// links found in the file.")
+    else:
+        if merged_texts:
+            merged = "\n\n".join(merged_texts).encode("utf-8")
+            filename = "merged_decoded.txt"
+            from io import BytesIO
+            bio = BytesIO(merged)
+            bio.name = filename
+            await bot.send_document(
+                chat_id=m.chat.id,
+                document=bio,
+                caption=f"✅ Merged {len(merged_texts)} decoded text link(s) into one file."
+            )
 
-           await m.reply_text(f"✅ Processed {found} enc:// link(s).")
+         await m.reply_text(f"✅ Processed {found} enc:// link(s).")
 
 
 
