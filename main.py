@@ -498,6 +498,7 @@ def detect_text(data: bytes):
         return False, ""
     
 
+
 @bot.on_message(filters.command(["v2upload"]))
 async def v2upload_handler(bot: Client, m: Message):
     text = m.text or ""
@@ -506,7 +507,11 @@ async def v2upload_handler(bot: Client, m: Message):
         await m.reply_text("⚠️ Please send `/v2upload enc://...:txt` style link.")
         return
     
+    merged_texts = []
+    found = 0
+
     for payload, ext in matches:
+        found += 1
         ext = ext or "txt"
         decoded = None
         diag = []
@@ -548,36 +553,39 @@ async def v2upload_handler(bot: Client, m: Message):
             continue
 
         is_text, txt = detect_text(decoded)
-        filename = f"decoded.{ext}"
 
         if is_text:
             merged_texts.append(txt)
         else:
-           # send non-text individually
-           filename = f"decoded_{found}.{ext or 'bin'}"
-           await bot.send_document(
-               chat_id=m.chat.id,
-               document=(filename, decoded),
-               caption=f"✅ Binary decoded (link {found}) via {', '.join(diag)}"
-            ) 
-
-
-         if found == 0:
-             await m.reply_text("⚠️ No enc:// links found in the file.")
-         else:
-             if merged_texts:
-                 merged = "\n\n".join(merged_texts).encode("utf-8")
-                 filename = "merged_decoded.txt"
-                 from io import BytesIO
-                 bio = BytesIO(merged)
-                 bio.name = filename
-                 await bot.send_document(
-                     chat_id=m.chat.id,
-                     document=bio,
-                     caption=f"✅ Merged {len(merged_texts)} decoded text link(s) into one file."
+            filename = f"decoded_{found}.{ext or 'bin'}"
+            await bot.send_document(
+                chat_id=m.chat.id,
+                document=(filename, decoded),
+                caption=f"✅ Binary decoded (link {found}) via {', '.join(diag)}"
             )
 
-             await m.reply_text(f"✅ Processed {found} enc:// link(s).")
+    if found == 0:
+        await m.reply_text("⚠️ No enc:// links found in the file.")
+    else:
+        if merged_texts:
+            merged = "\n\n".join(merged_texts).encode("utf-8")
+            filename = "merged_decoded.txt"
+            from io import BytesIO
+            bio = BytesIO(merged)
+            bio.name = filename
+            await bot.send_document(
+                chat_id=m.chat.id,
+                document=bio,
+                caption=f"✅ Merged {len(merged_texts)} decoded text link(s) into one file."
+            )
+
+        await m.reply_text(f"✅ Processed {found} enc:// link(s).")
+
+            
+
+        
+
+                    
 
 
 
