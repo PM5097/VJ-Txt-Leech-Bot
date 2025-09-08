@@ -551,14 +551,14 @@ async def v2upload_handler(bot: Client, m: Message):
 
         if is_text:
             merged_texts.append(txt)
-            else:
-                # send non-text individually
-                filename = f"decoded_{found}.{ext or 'bin'}"
-                await bot.send_document(
-                    chat_id=m.chat.id,
-                    document=(filename, decoded),
-                    caption=f"✅ Binary decoded (link {found}) via {', '.join(diag)}"
-                )
+        else:
+           # send non-text individually
+           filename = f"decoded_{found}.{ext or 'bin'}"
+            await bot.send_document(
+              chat_id=m.chat.id,
+             document=(filename, decoded),
+             caption=f"✅ Binary decoded (link {found}) via {', '.join(diag)}"
+            )
 if found == 0:
     await m.reply_text("⚠️ No enc:// links found in the file.")
 else:
